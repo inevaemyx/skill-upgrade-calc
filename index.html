@@ -351,11 +351,12 @@ option { background:#0a1e30; color:var(--text); }
   border-radius:4px; background:rgba(232,168,48,0.04);
 }
 .copies-note strong { color:var(--dim); }
-.sum-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(108px,1fr)); gap:0.5rem; }
+.sum-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(108px,1fr)); gap:0.5rem; justify-items:center; }
 .sum-block {
   background: rgba(4,14,26,0.6);
   border:1px solid var(--border); border-radius:6px;
   padding:0.6rem 0.55rem; text-align:center; position:relative; overflow:hidden;
+  width:100%;
 }
 .sum-block::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:6px 6px 0 0; }
 .sum-block.core::before   { background:var(--core); }
@@ -432,20 +433,23 @@ option { background:#0a1e30; color:var(--text); }
   .orb-cmp { padding: 0.2rem 0.38rem 0.26rem; }
   .cmp-row { gap: 0.15rem; margin-bottom: 0.2rem; }
   /* ── Compact summary ── */
-  .summary { padding: 0.65rem 0.75rem; }
-  .sum-head { margin-bottom: 0.4rem; }
-  .sum-title-en { font-size: 0.72rem; }
-  .copies-note { font-size: 0.5rem; padding: 0.22rem 0.4rem; margin-bottom: 0.45rem; }
-  .sum-grid { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
-  .sum-block { padding: 0.38rem 0.3rem; }
-  .sum-icon { width: 16px; height: 16px; font-size: 8px; margin-bottom: 0.18rem; }
-  .sum-val { font-size: 1rem; }
-  .sum-frag { font-size: 0.44rem; }
-  .sum-lbl { font-size: 0.48rem; }
+  .summary { padding: 0.5rem 0.5rem; }
+  .sum-head { margin-bottom: 0.3rem; }
+  .sum-title-en { font-size: 0.7rem; }
+  /* hide the copies note on mobile */
+  .copies-note { display: none; }
+  /* 6 columns — one per resource, each row is one section */
+  .sum-grid { grid-template-columns: repeat(6, 1fr); gap: 0.22rem; }
+  .sum-block { padding: 0.28rem 0.1rem; }
+  /* hide icons on mobile, just pip colour strip + value */
+  .sum-icon { display: none; }
+  .sum-val { font-size: 0.82rem; }
+  .sum-frag { display: none; }
+  .sum-lbl { font-size: 0.42rem; line-height: 1.1; }
   .sum-lbl-zh { display: none; }
-  .sum-row-lbl { font-size: 0.5rem; margin-bottom: 0.3rem; }
-  .sum-section { margin-top: 0.6rem; }
-  .btn-reset { font-size: 0.54rem; padding: 0.16rem 0.4rem; }
+  .sum-row-lbl { font-size: 0.48rem; margin-bottom: 0.22rem; padding-bottom: 0.18rem; }
+  .sum-section { margin-top: 0.45rem; }
+  .btn-reset { font-size: 0.52rem; padding: 0.14rem 0.35rem; }
 }
 </style>
 </head>

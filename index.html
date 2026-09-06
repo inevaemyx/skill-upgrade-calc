@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -579,9 +579,8 @@ function resetAll() {
 
 function toggleTheme() {
   const r=document.documentElement, c=r.getAttribute('data-theme');
-  if(!c) r.setAttribute('data-theme','dark');
-  else if(c==='dark') r.setAttribute('data-theme','light');
-  else r.removeAttribute('data-theme');
+  if(c==='light') r.setAttribute('data-theme','dark');
+  else r.setAttribute('data-theme','light');
 }
 
 buildGrid();

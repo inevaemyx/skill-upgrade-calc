@@ -257,6 +257,41 @@ option { background:#0a1e30; color:var(--text); }
   color:var(--teal); text-transform:uppercase; white-space:nowrap;
 }
 
+/* Type ring buttons */
+.type-ring {
+  display:flex; gap:0.22rem; align-items:center; flex-shrink:0;
+}
+.type-btn {
+  width:24px; height:24px; border-radius:50%;
+  background:rgba(4,14,26,0.9);
+  border:1px solid rgba(180,140,50,0.25);
+  color:var(--muted);
+  font-family:'Ma Shan Zheng',serif;
+  font-size:0.72rem;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:all .15s;
+  padding:0;
+  line-height:1;
+}
+.type-btn:hover {
+  border-color:rgba(244,200,96,0.5);
+  color:var(--gold-d);
+  background:rgba(232,168,48,0.08);
+}
+.type-btn.active {
+  background:rgba(232,168,48,0.16);
+  border-color:var(--gold);
+  color:var(--gold-d);
+  box-shadow:0 0 8px rgba(232,168,48,0.35), inset 0 0 4px rgba(232,168,48,0.1);
+}
+.type-btn.active-teal {
+  background:rgba(30,200,168,0.14);
+  border-color:var(--teal);
+  color:var(--teal);
+  box-shadow:0 0 8px rgba(30,200,168,0.25);
+}
+
 /* Compare section */
 .orb-cmp { padding:0.28rem 0.6rem 0.36rem; }
 .cmp-row {
@@ -583,6 +618,22 @@ function diffHtml(main, cmp) {
   return html;
 }
 
+function typeRing(id, activeType, cls) {
+  const chars = {'人界':'界','三系':'三','熬海':'海'};
+  return `<div class="type-ring" id="${id}" data-val="${activeType}">${
+    TYPES.map(t=>`<button class="type-btn${t===activeType?' '+(cls||'active'):''}" data-type="${t}" title="${TYPE_EN[t]}" onclick="setType(this,'${cls||'active'}')">` +
+      `${chars[t]}</button>`).join('')
+  }</div>`;
+}
+
+function setType(btn, cls) {
+  const ring = btn.closest('.type-ring');
+  ring.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active','active-teal'));
+  btn.classList.add(cls || 'active');
+  ring.dataset.val = btn.dataset.type;
+  update();
+}
+
 function buildGrid() {
   const ring = document.getElementById('skillGrid');
   for (let i=0; i<N; i++) {
@@ -591,7 +642,7 @@ function buildGrid() {
     el.innerHTML = `
       <div class="orb-head">
         <span class="orb-num">S${i+1}</span>
-        <select id="type${i}" onchange="update()">${typeOpts('人界')}</select>
+        ${typeRing(`type${i}`,'人界','active')}
       </div>
       <div class="orb-main">
         <div class="lvl-row">
@@ -606,7 +657,7 @@ function buildGrid() {
       <div class="orb-sep"><span class="vs-txt">⇄ swap</span></div>
       <div class="orb-cmp">
         <div class="cmp-row">
-          <select id="ctype${i}" onchange="update()">${typeOpts('人界')}</select>
+          ${typeRing(`ctype${i}`,'人界','active-teal')}
           <span class="arr">→</span>
           <select id="ctgt${i}" onchange="update()">${levelOpts(0)}</select>
         </div>
@@ -628,10 +679,10 @@ function update() {
   let curG=0,curP=0,curB=0, upgG=0,upgP=0,upgB=0, swpG=0,swpP=0,swpB=0;
 
   for (let i=0; i<N; i++) {
-    const type  = document.getElementById(`type${i}`).value;
+    const type  = document.getElementById(`type${i}`).dataset.val;
     const from  = parseInt(document.getElementById(`from${i}`).value);
     const to    = parseInt(document.getElementById(`to${i}`).value);
-    const ctype = document.getElementById(`ctype${i}`).value;
+    const ctype = document.getElementById(`ctype${i}`).dataset.val;
     const ctgt  = parseInt(document.getElementById(`ctgt${i}`).value);
 
     const cur   = calcCost(type,  0,    from); // what's already invested
@@ -666,13 +717,22 @@ function renderSummary(id, coreByType, g, p, b) {
   document.getElementById(id).innerHTML = html;
 }
 
+function resetRing(id, defaultType, cls) {
+  const ring = document.getElementById(id);
+  ring.dataset.val = defaultType;
+  ring.querySelectorAll('.type-btn').forEach(b => {
+    b.classList.remove('active','active-teal');
+    if (b.dataset.type === defaultType) b.classList.add(cls || 'active');
+  });
+}
+
 function resetAll() {
   for (let i=0; i<N; i++) {
-    document.getElementById(`type${i}`).value  = '人界';
-    document.getElementById(`from${i}`).value  = '0';
-    document.getElementById(`to${i}`).value    = '0';
-    document.getElementById(`ctype${i}`).value = '人界';
-    document.getElementById(`ctgt${i}`).value  = '0';
+    resetRing(`type${i}`,  '人界', 'active');
+    resetRing(`ctype${i}`, '人界', 'active-teal');
+    document.getElementById(`from${i}`).value = '0';
+    document.getElementById(`to${i}`).value   = '0';
+    document.getElementById(`ctgt${i}`).value = '0';
   }
   update();
 }

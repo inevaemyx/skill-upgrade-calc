@@ -398,58 +398,75 @@ option { background:#0a1e30; color:var(--text); }
   .orb-ring { grid-template-columns: repeat(2, 1fr); max-width: 100%; }
 }
 
-/* ── Mobile: all 6 orbs fit on screen ── */
+/* ── Mobile: all 6 orbs fit on one screen ── */
 @media (max-width:540px) {
-  body { font-size: 10px; padding-bottom: 1.5rem; }
-  header { padding: 0.45rem 0.7rem; }
-  .site-en { font-size: 0.8rem; }
+  body { font-size: 10px; padding-bottom: 1rem; }
+
+  header { padding: 0.45rem 0.7rem; justify-content: center; }
+  .site-en { font-size: 0.82rem; }
   .legend { display: none; }
-  /* Hide instructions panel on mobile — labels are self-explanatory */
+
+  /* Hide instructions — not needed on mobile */
   .sidebar { display: none; }
-  .page-layout { padding: 0.4rem 0.4rem; gap: 0.5rem; }
-  main { padding: 0; }
-  .divider { font-size: 0.5rem; margin-bottom: 0.5rem; }
-  /* 2-column grid, 3 rows */
-  .ring-wrap { margin-bottom: 0.9rem; }
-  .orb-ring { grid-template-columns: repeat(2, 1fr); gap: 0.38rem; max-width: 100%; }
-  /* ── Compact orb card ── */
-  .orb-head { padding: 0.26rem 0.38rem; }
-  .orb-num { font-size: 0.56rem; }
-  .type-btn { width: 18px; height: 18px; font-size: 0.6rem; }
-  .type-ring { gap: 0.14rem; }
-  .orb-main { padding: 0.28rem 0.38rem 0.24rem; }
-  .lvl-row { gap: 0.15rem; margin-bottom: 0.22rem; }
-  .lbl  { font-size: 0.46rem; width: 18px; }
-  .lbl-r { font-size: 0.46rem; }
-  .arr { font-size: 0.58rem; }
-  select { font-size: 0.6rem; padding: 0.16rem 0.9rem 0.16rem 0.28rem; }
-  .cbar { padding-top: 0.2rem; gap: 0.04rem; flex-wrap: wrap; }
-  .cb { font-size: 0.6rem; padding: 0.04rem 0.18rem; gap: 0.12rem; }
+
+  /* Centre everything on screen */
+  .page-layout { padding: 0.4rem 0.5rem; gap: 0.45rem; align-items: center; }
+  main { padding: 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .divider { font-size: 0.5rem; margin-bottom: 0.45rem; width: 100%; }
+  .ring-wrap { margin-bottom: 0.7rem; width: 100%; }
+
+  /* 2-column grid, 3 rows — fills width, centred */
+  .orb-ring {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.42rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  /* ── Orb cards: bigger tap targets, still compact ── */
+  .orb-head { padding: 0.32rem 0.5rem; }
+  .orb-num { font-size: 0.6rem; }
+
+  /* Bigger M/D/B buttons for easier tapping */
+  .type-btn { width: 26px; height: 26px; font-size: 0.72rem; }
+  .type-ring { gap: 0.2rem; }
+
+  .orb-main { padding: 0.3rem 0.45rem 0.26rem; }
+  .lvl-row { gap: 0.18rem; margin-bottom: 0.24rem; }
+  .lbl  { font-size: 0.5rem; width: 20px; }
+  .lbl-r { font-size: 0.5rem; }
+  .arr { font-size: 0.62rem; }
+
+  /* Taller selects for easier tapping */
+  select { font-size: 0.65rem; padding: 0.22rem 1rem 0.22rem 0.3rem; }
+
+  .cbar { padding-top: 0.22rem; gap: 0.05rem; flex-wrap: wrap; }
+  .cb { font-size: 0.62rem; padding: 0.05rem 0.2rem; gap: 0.12rem; }
   .cb-pip { width: 3px; height: 3px; }
-  .cb-sub { font-size: 0.42rem; }
-  .cb-sep { font-size: 0.44rem; }
-  .orb-sep { margin: 0.1rem 0; padding: 0 0.38rem; }
-  .vs-txt { font-size: 0.42rem; }
-  .orb-cmp { padding: 0.2rem 0.38rem 0.26rem; }
-  .cmp-row { gap: 0.15rem; margin-bottom: 0.2rem; }
-  /* ── Compact summary ── */
-  .summary { padding: 0.5rem 0.5rem; }
-  .sum-head { margin-bottom: 0.3rem; }
-  .sum-title-en { font-size: 0.7rem; }
-  /* hide the copies note on mobile */
+  .cb-sub { font-size: 0.44rem; }
+  .cb-sep { font-size: 0.46rem; }
+
+  .orb-sep { margin: 0.12rem 0; padding: 0 0.45rem; }
+  .vs-txt { font-size: 0.44rem; }
+
+  .orb-cmp { padding: 0.24rem 0.45rem 0.28rem; }
+  .cmp-row { gap: 0.18rem; margin-bottom: 0.22rem; }
+
+  /* ── Summary: 6-col rows, centred ── */
+  .summary { padding: 0.5rem 0.5rem; width: 100%; }
+  .sum-head { margin-bottom: 0.3rem; justify-content: center; }
+  .sum-title-en { font-size: 0.72rem; }
   .copies-note { display: none; }
-  /* 6 columns — one per resource, each row is one section */
-  .sum-grid { grid-template-columns: repeat(6, 1fr); gap: 0.22rem; }
-  .sum-block { padding: 0.28rem 0.1rem; }
-  /* hide icons on mobile, just pip colour strip + value */
+  .sum-grid { grid-template-columns: repeat(6, 1fr); gap: 0.22rem; justify-items: center; }
+  .sum-block { padding: 0.3rem 0.1rem; width: 100%; }
   .sum-icon { display: none; }
-  .sum-val { font-size: 0.82rem; }
+  .sum-val { font-size: 0.85rem; }
   .sum-frag { display: none; }
-  .sum-lbl { font-size: 0.42rem; line-height: 1.1; }
+  .sum-lbl { font-size: 0.44rem; line-height: 1.1; }
   .sum-lbl-zh { display: none; }
-  .sum-row-lbl { font-size: 0.48rem; margin-bottom: 0.22rem; padding-bottom: 0.18rem; }
-  .sum-section { margin-top: 0.45rem; }
-  .btn-reset { font-size: 0.52rem; padding: 0.14rem 0.35rem; }
+  .sum-row-lbl { font-size: 0.5rem; margin-bottom: 0.24rem; padding-bottom: 0.18rem; }
+  .sum-section { margin-top: 0.48rem; }
+  .btn-reset { font-size: 0.54rem; padding: 0.16rem 0.4rem; }
 }
 </style>
 </head>

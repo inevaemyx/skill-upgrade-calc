@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,35 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:      #08101C;
-  --surface: #10192A;
-  --card:    #162035;
-  --border:  #222E48;
-  --blight:  #1C2B45;
-  --gold:    #E0A820;
-  --gold-d:  #6A4E0A;
-  --gold-g:  rgba(224,168,32,.15);
-  --purple:  #9B6EE8;
-  --blue:    #5AAAE8;
-  --core:    #8898B8;
-  --text:    #C8D8F0;
-  --dim:     #7888A8;
-  --muted:   #48587A;
-  --green:   #3EC87A;
-  --red:     #E05A5A;
+  --bg:#EEF2FB; --surface:#FFF; --card:#F5F8FF; --border:#C8D4EC; --blight:#D8E4F8;
+  --gold:#A87000; --gold-d:#D4AC40; --gold-g:rgba(168,112,0,.1);
+  --purple:#7B3AEB; --blue:#2468E8; --core:#5A6888;
+  --text:#182038; --dim:#4A5878; --muted:#8898B8;
+  --green:#1A9954; --red:#CC3333;
 }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg:#EEF2FB; --surface:#FFF; --card:#F5F8FF;
-    --border:#C8D4EC; --blight:#D8E4F8;
-    --gold:#A87000; --gold-d:#D4AC40; --gold-g:rgba(168,112,0,.1);
-    --purple:#7B3AEB; --blue:#2468E8; --core:#5A6888;
-    --text:#182038; --dim:#4A5878; --muted:#8898B8;
-    --green:#1A9954; --red:#CC3333;
-  }
-}
-:root[data-theme="dark"]  { --bg:#08101C; --surface:#10192A; --card:#162035; --border:#222E48; --blight:#1C2B45; --gold:#E0A820; --gold-d:#6A4E0A; --gold-g:rgba(224,168,32,.15); --purple:#9B6EE8; --blue:#5AAAE8; --core:#8898B8; --text:#C8D8F0; --dim:#7888A8; --muted:#48587A; --green:#3EC87A; --red:#E05A5A; }
-:root[data-theme="light"] { --bg:#EEF2FB; --surface:#FFF; --card:#F5F8FF; --border:#C8D4EC; --blight:#D8E4F8; --gold:#A87000; --gold-d:#D4AC40; --gold-g:rgba(168,112,0,.1); --purple:#7B3AEB; --blue:#2468E8; --core:#5A6888; --text:#182038; --dim:#4A5878; --muted:#8898B8; --green:#1A9954; --red:#CC3333; }
 
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 
@@ -72,14 +49,7 @@ header {
 .lpip.purple { background:var(--purple); }
 .lpip.blue   { background:var(--blue); }
 .lsep { color:var(--muted); font-size:0.5rem; }
-.theme-btn {
-  appearance:none; background:none;
-  border:1px solid var(--border); border-radius:4px;
-  color:var(--dim); padding:0.22rem 0.55rem;
-  font-size:0.65rem; cursor:pointer; font-family:inherit;
-  transition:color .15s, border-color .15s; flex-shrink:0;
-}
-.theme-btn:hover { color:var(--text); border-color:var(--dim); }
+
 
 /* ── Layout ── */
 main { max-width:1080px; margin:0 auto; padding:1.25rem 1.5rem; }
@@ -330,7 +300,6 @@ select:hover, select:focus { border-color:var(--dim); outline:none; }
     <div class="lsep">·</div>
     <div class="leg" style="opacity:.6">1 copy = 40 frags</div>
   </div>
-  <button class="theme-btn" onclick="toggleTheme()">Theme · 主题</button>
 </header>
 
 <main>
@@ -577,11 +546,6 @@ function resetAll() {
   update();
 }
 
-function toggleTheme() {
-  const r=document.documentElement, c=r.getAttribute('data-theme');
-  if(c==='light') r.setAttribute('data-theme','dark');
-  else r.setAttribute('data-theme','light');
-}
 
 buildGrid();
 update();

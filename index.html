@@ -577,8 +577,7 @@ function buildGrid() {
           <select id="ctgt${i}" onchange="update()">${levelOpts(0)}</select>
         </div>
         <div class="cbar" id="cbar${i}" style="padding-top:0; border-top:none; margin-top:0.3rem"></div>
-      </div>
-      <div class="orb-diff" id="diff${i}"></div>`;
+      </div>`;
     ring.appendChild(el);
   }
 }
@@ -610,7 +609,6 @@ function update() {
 
     document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
     document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);
-    document.getElementById(`diff${i}`).innerHTML = diffHtml(cost, ccost);
 
     curByType[type] += cur.c;  curG+=cur.g;  curP+=cur.p;  curB+=cur.b;
     upgByType[type] += cost.c; upgG+=cost.g; upgP+=cost.p; upgB+=cost.b;

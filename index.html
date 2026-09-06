@@ -489,18 +489,6 @@ function levelOpts(def) {
   return html+'</optgroup>';
 }
 
-function refreshSwapOpts(i, mainCost, ctype) {
-  const el = document.getElementById(`ctgt${i}`);
-  const cur = parseInt(el.value);
-  let html='', t=0;
-  for (let lvl=0; lvl<LEVELS.length; lvl++) {
-    if (lvl===(t===0?0:TIER_GROUPS[t-1].end)) { if(lvl>0)html+='</optgroup>'; html+=`<optgroup label="${TIER_GROUPS[t].label}">`; t++; }
-    const sc = calcCost(ctype, 0, lvl);
-    const safe = lvl > 0 && sc.g <= mainCost.g && sc.p <= mainCost.p && sc.b <= mainCost.b;
-    html+=`<option value="${lvl}"${lvl===cur?' selected':''}>${LEVELS[lvl]}${safe?' ✓ Safe':''}</option>`;
-  }
-  el.innerHTML = html+'</optgroup>';
-}
 
 function typeOpts(sel) {
   return TYPES.map(t=>`<option value="${t}"${t===sel?' selected':''}>${TYPE_EN[t]} · ${TYPE_ZH[t]}</option>`).join('');
@@ -575,7 +563,7 @@ function buildGrid() {
       <div class="orb-cmp">
         <div class="cmp-row">
           <select id="ctype${i}" onchange="update()">${typeOpts('人界')}</select>
-          <select id="ctgt${i}" onchange="update()" style="flex:0 0 72px">${levelOpts(0)}</select>
+          <span class="cmp-lbl" style="font-size:0.54rem;opacity:.5">→ From lvl</span>
         </div>
         <div class="cbar" id="cbar${i}" style="padding-top:0; border-top:none; margin-top:0.3rem"></div>
       </div>
@@ -600,12 +588,10 @@ function update() {
     const from  = parseInt(document.getElementById(`from${i}`).value);
     const to    = parseInt(document.getElementById(`to${i}`).value);
     const ctype = document.getElementById(`ctype${i}`).value;
-    const ctgt  = parseInt(document.getElementById(`ctgt${i}`).value);
 
     const cur   = calcCost(type,  0,    from); // what's already invested
     const cost  = calcCost(type,  from, to);   // upgrade differential
-    refreshSwapOpts(i, cost, ctype);
-    const ccost = calcCost(ctype, 0, ctgt);    // swap differential
+    const ccost = calcCost(ctype, from, to);   // swap: same from→to range, different type
 
     document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
     document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);
@@ -639,7 +625,6 @@ function resetAll() {
     document.getElementById(`from${i}`).value  = '0';
     document.getElementById(`to${i}`).value    = '0';
     document.getElementById(`ctype${i}`).value = '人界';
-    document.getElementById(`ctgt${i}`).value  = '0';
   }
   update();
 }

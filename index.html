@@ -252,6 +252,8 @@ select:hover, select:focus { border-color:var(--dim); outline:none; }
 .dc.save { color:var(--green); background:rgba(62,200,122,.08); }
 .dc.cost { color:var(--red);   background:rgba(224,90,90,.08); }
 .dc.even { color:var(--muted); font-weight:400; font-size:0.6rem; }
+.dc.badge-free { color:var(--green); background:rgba(26,153,84,.12); font-weight:700; letter-spacing:0.04em; }
+.dc.badge-save { color:var(--green); background:rgba(26,153,84,.12); font-weight:700; letter-spacing:0.04em; }
 
 /* ── Summary ── */
 .summary {
@@ -525,7 +527,15 @@ function diffHtml(main, cmp) {
     {k:'p',pip:'purple',lbl:'Purple'},
     {k:'b',pip:'blue',  lbl:'Blue'  },
   ];
-  let html='<span class="diff-lbl">Δ</span>';
+
+  const isFree    = keys.every(d => cmp[d.k] === 0);
+  const isAllSave = !isFree && keys.every(d => cmp[d.k] <= main[d.k]);
+
+  if (isFree) return '<span class="dc badge-free">✓ FREE — no additional cost</span>';
+
+  let html = '<span class="diff-lbl">Δ</span>';
+  if (isAllSave) html += '<span class="dc badge-save">✓ SAVES</span>';
+
   let allEven = true;
   for (const d of keys) {
     const delta = cmp[d.k] - main[d.k];

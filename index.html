@@ -266,8 +266,8 @@ option { background:#0a1e30; color:var(--text); }
   background:rgba(4,14,26,0.9);
   border:1px solid rgba(180,140,50,0.25);
   color:var(--muted);
-  font-family:'Ma Shan Zheng',serif;
-  font-size:0.72rem;
+  font-family:'Rajdhani',sans-serif;
+  font-size:0.72rem; font-weight:700; letter-spacing:0.04em;
   cursor:pointer;
   display:flex; align-items:center; justify-content:center;
   transition:all .15s;
@@ -619,7 +619,7 @@ function diffHtml(main, cmp) {
 }
 
 function typeRing(id, activeType, cls) {
-  const chars = {'人界':'界','三系':'三','熬海':'海'};
+  const chars = {'人界':'M','三系':'D','熬海':'B'};
   return `<div class="type-ring" id="${id}" data-val="${activeType}">${
     TYPES.map(t=>`<button class="type-btn${t===activeType?' '+(cls||'active'):''}" data-type="${t}" title="${TYPE_EN[t]}" onclick="setType(this,'${cls||'active'}')">` +
       `${chars[t]}</button>`).join('')

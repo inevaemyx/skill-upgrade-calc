@@ -745,8 +745,8 @@ function update() {
       ? calcCost(ctype, from, ctgt)
       : calcCost(ctype, 0,    ctgt);
 
-    document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
-    document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);
+    document.getElementById(`bar${i}`).innerHTML  = barHtml(cost, type);
+    document.getElementById(`cbar${i}`).innerHTML = diffHtml(cost, ccost); // Δ vs upgrade
 
     curByType[type] += cur.c;  curG+=cur.g;  curP+=cur.p;  curB+=cur.b;
     upgByType[type] += cost.c; upgG+=cost.g; upgP+=cost.p; upgB+=cost.b;

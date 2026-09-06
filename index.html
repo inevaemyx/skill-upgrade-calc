@@ -593,7 +593,10 @@ function update() {
 
     const cur   = calcCost(type,  0,    from); // what's already invested
     const cost  = calcCost(type,  from, to);   // upgrade: current → desired
-    const ccost = calcCost(ctype, 0,    ctgt); // swap: build alt type from 1★ to chosen level
+    // swap: same realm = delta from current level; different realm = build from scratch
+    const ccost = (ctype === type)
+      ? calcCost(ctype, from, ctgt)
+      : calcCost(ctype, 0,    ctgt);
 
     document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
     document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);

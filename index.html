@@ -563,7 +563,8 @@ function buildGrid() {
       <div class="orb-cmp">
         <div class="cmp-row">
           <select id="ctype${i}" onchange="update()">${typeOpts('人界')}</select>
-          <span class="cmp-lbl" style="font-size:0.54rem;opacity:.5">→ From lvl</span>
+          <span class="arr">→</span>
+          <select id="ctgt${i}" onchange="update()">${levelOpts(0)}</select>
         </div>
         <div class="cbar" id="cbar${i}" style="padding-top:0; border-top:none; margin-top:0.3rem"></div>
       </div>
@@ -588,10 +589,11 @@ function update() {
     const from  = parseInt(document.getElementById(`from${i}`).value);
     const to    = parseInt(document.getElementById(`to${i}`).value);
     const ctype = document.getElementById(`ctype${i}`).value;
+    const ctgt  = parseInt(document.getElementById(`ctgt${i}`).value);
 
     const cur   = calcCost(type,  0,    from); // what's already invested
     const cost  = calcCost(type,  from, to);   // upgrade: current → desired
-    const ccost = calcCost(ctype, 0,    from); // swap: build alt type from 1★ to current level
+    const ccost = calcCost(ctype, 0,    ctgt); // swap: build alt type from 1★ to chosen level
 
     document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
     document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);
@@ -625,6 +627,7 @@ function resetAll() {
     document.getElementById(`from${i}`).value  = '0';
     document.getElementById(`to${i}`).value    = '0';
     document.getElementById(`ctype${i}`).value = '人界';
+    document.getElementById(`ctgt${i}`).value  = '0';
   }
   update();
 }

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Upgrade Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #08101C;
+  --surface: #10192A;
+  --card:    #162035;
+  --border:  #222E48;
+  --blight:  #1C2B45;
+  --gold:    #E0A820;
+  --gold-d:  #6A4E0A;
+  --gold-g:  rgba(224,168,32,.15);
+  --purple:  #9B6EE8;
+  --blue:    #5AAAE8;
+  --core:    #8898B8;
+  --text:    #C8D8F0;
+  --dim:     #7888A8;
+  --muted:   #48587A;
+  --green:   #3EC87A;
+  --red:     #E05A5A;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#EEF2FB; --surface:#FFF; --card:#F5F8FF;
+    --border:#C8D4EC; --blight:#D8E4F8;
+    --gold:#A87000; --gold-d:#D4AC40; --gold-g:rgba(168,112,0,.1);
+    --purple:#7B3AEB; --blue:#2468E8; --core:#5A6888;
+    --text:#182038; --dim:#4A5878; --muted:#8898B8;
+    --green:#1A9954; --red:#CC3333;
+  }
+}
+:root[data-theme="dark"]  { --bg:#08101C; --surface:#10192A; --card:#162035; --border:#222E48; --blight:#1C2B45; --gold:#E0A820; --gold-d:#6A4E0A; --gold-g:rgba(224,168,32,.15); --purple:#9B6EE8; --blue:#5AAAE8; --core:#8898B8; --text:#C8D8F0; --dim:#7888A8; --muted:#48587A; --green:#3EC87A; --red:#E05A5A; }
+:root[data-theme="light"] { --bg:#EEF2FB; --surface:#FFF; --card:#F5F8FF; --border:#C8D4EC; --blight:#D8E4F8; --gold:#A87000; --gold-d:#D4AC40; --gold-g:rgba(168,112,0,.1); --purple:#7B3AEB; --blue:#2468E8; --core:#5A6888; --text:#182038; --dim:#4A5878; --muted:#8898B8; --green:#1A9954; --red:#CC3333; }
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* ── Header ── */
+header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0.8rem 1.75rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.header-left { display:flex; align-items:center; gap:0.7rem; }
+.emblem { width:30px; height:30px; flex-shrink:0; }
+.site-en  { font-size:0.78rem; font-weight:600; color:var(--text); }
+.site-sub { font-size:0.56rem; color:var(--muted); letter-spacing:0.12em; text-transform:uppercase; }
+.legend {
+  display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;
+}
+.leg { display:flex; align-items:center; gap:0.22rem; font-size:0.58rem; color:var(--dim); }
+.lpip { width:5px; height:5px; border-radius:50%; }
+.lpip.core   { background:var(--core); }
+.lpip.gold   { background:var(--gold); }
+.lpip.purple { background:var(--purple); }
+.lpip.blue   { background:var(--blue); }
+.lsep { color:var(--muted); font-size:0.5rem; }
+.theme-btn {
+  appearance:none; background:none;
+  border:1px solid var(--border); border-radius:4px;
+  color:var(--dim); padding:0.22rem 0.55rem;
+  font-size:0.65rem; cursor:pointer; font-family:inherit;
+  transition:color .15s, border-color .15s; flex-shrink:0;
+}
+.theme-btn:hover { color:var(--text); border-color:var(--dim); }
+
+/* ── Layout ── */
+main { max-width:1080px; margin:0 auto; padding:1.25rem 1.5rem; }
+.divider {
+  display:flex; align-items:center; gap:0.6rem;
+  font-size:0.56rem; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:0.8rem;
+}
+.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── Ring wrapper ── */
+.ring-wrap {
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ── Orb grid — 3 columns × 2 rows ── */
+.orb-ring {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ── Orb card ── */
+.orb {
+  position: relative;
+  width: 100%;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.orb:hover {
+  border-color: var(--gold-d);
+  box-shadow: 0 0 18px var(--gold-g);
+}
+
+/* Skill-num top-left accent colour strip */
+.orb::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+/* Orb head: skill label + type select */
+.orb-head {
+  display:flex; align-items:center; gap:0.4rem;
+  padding:0.42rem 0.6rem 0.38rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--blight);
+}
+.orb-num {
+  font-size:0.54rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--muted); white-space:nowrap; flex-shrink:0;
+}
+
+select {
+  appearance:none; -webkit-appearance:none;
+  background: var(--card);
+  border:1px solid var(--border); border-radius:4px;
+  color: var(--text);
+  padding:0.25rem 1.2rem 0.25rem 0.4rem;
+  font-size:0.72rem; font-family:'Noto Sans SC', system-ui, sans-serif;
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='4'%3E%3Cpath d='M1 1l3 2 3-2' stroke='%2348587A' stroke-width='1.2' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 0.35rem center;
+  transition:border-color .15s; min-width:0; width:100%;
+}
+select:hover, select:focus { border-color:var(--dim); outline:none; }
+
+/* Main upgrade section */
+.orb-main { padding:0.45rem 0.6rem 0.4rem; }
+
+.lvl-row {
+  display:flex; align-items:center; gap:0.28rem; margin-bottom:0.38rem;
+}
+.lbl  { font-size:0.56rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap; flex-shrink:0; width:24px; }
+.lbl-r{ font-size:0.56rem; color:var(--muted); letter-spacing:0.06em; text-transform:uppercase; white-space:nowrap; flex-shrink:0; }
+.arr  { color:var(--muted); flex-shrink:0; font-size:0.7rem; }
+
+/* Cost bar */
+.cbar {
+  display:flex; align-items:center; gap:0.08rem;
+  padding-top:0.35rem;
+  border-top:1px solid var(--blight);
+  flex-wrap:wrap;
+}
+.cb {
+  display:inline-flex; align-items:center; gap:0.18rem;
+  font-size:0.72rem; font-weight:600; font-variant-numeric:tabular-nums;
+  padding:0.1rem 0.3rem; border-radius:3px; white-space:nowrap;
+}
+.cb.core   { color:var(--core);   background:rgba(136,152,184,.1); }
+.cb.gold   { color:var(--gold);   background:rgba(224,168,32,.1);  }
+.cb.purple { color:var(--purple); background:rgba(155,110,232,.1); }
+.cb.blue   { color:var(--blue);   background:rgba(90,170,232,.1);  }
+.cb.zero   { opacity:0.35; }
+.cb-pip { width:4px; height:4px; border-radius:50%; flex-shrink:0; }
+.cb-pip.core   { background:var(--core); }
+.cb-pip.gold   { background:var(--gold); }
+.cb-pip.purple { background:var(--purple); }
+.cb-pip.blue   { background:var(--blue); }
+.cb-sub { font-size:0.52rem; font-weight:400; color:var(--muted); }
+.cb-sep { color:var(--muted); font-size:0.55rem; padding:0 0.03rem; }
+
+/* VS separator */
+.orb-sep {
+  display:flex; align-items:center; gap:0.4rem;
+  padding:0 0.6rem;
+  margin:0.2rem 0;
+}
+.orb-sep::before, .orb-sep::after {
+  content:''; flex:1; height:1px; background:var(--blight);
+}
+.vs-txt {
+  font-size:0.52rem; font-weight:700; letter-spacing:0.14em;
+  color:var(--muted); text-transform:uppercase; white-space:nowrap;
+}
+
+/* Compare section — type + target only */
+.orb-cmp { padding:0.3rem 0.6rem 0.38rem; }
+.cmp-row {
+  display:flex; align-items:center; gap:0.28rem; margin-bottom:0.35rem;
+}
+.cmp-lbl {
+  font-size:0.52rem; color:var(--muted); letter-spacing:0.05em;
+  text-transform:uppercase; white-space:nowrap; flex-shrink:0;
+}
+
+/* Diff row — sits between main bar and VS divider */
+.orb-diff {
+  display:flex; align-items:center; gap:0.22rem; flex-wrap:wrap;
+  padding:0.25rem 0.6rem;
+  background:rgba(0,0,0,0.06);
+}
+.diff-lbl {
+  font-size:0.52rem; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--muted); flex-shrink:0;
+}
+.dc {
+  display:inline-flex; align-items:center; gap:0.16rem;
+  font-size:0.66rem; font-weight:600; font-variant-numeric:tabular-nums;
+  padding:0.08rem 0.28rem; border-radius:3px; white-space:nowrap;
+}
+.dc.save { color:var(--green); background:rgba(62,200,122,.08); }
+.dc.cost { color:var(--red);   background:rgba(224,90,90,.08); }
+.dc.even { color:var(--muted); font-weight:400; font-size:0.6rem; }
+
+/* ── Summary ── */
+.summary {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:7px; padding:1rem 1.2rem;
+}
+.sum-head {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:0.6rem;
+}
+.sum-title-en { font-size:0.78rem; font-weight:600; color:var(--text); }
+.sum-title-zh { font-family:'Ma Shan Zheng',serif; font-size:0.68rem; color:var(--gold); opacity:0.65; letter-spacing:0.04em; margin-left:0.35rem; }
+.btn-reset {
+  appearance:none; background:none;
+  border:1px solid var(--border); border-radius:4px;
+  color:var(--muted); padding:0.2rem 0.55rem;
+  font-size:0.62rem; cursor:pointer; font-family:inherit;
+  transition:color .15s, border-color .15s;
+}
+.btn-reset:hover { color:var(--text); border-color:var(--dim); }
+.copies-note {
+  font-size:0.58rem; color:var(--muted); margin-bottom:0.7rem;
+  padding:0.3rem 0.55rem; border:1px solid var(--blight);
+  border-radius:4px; background:var(--card);
+}
+.copies-note strong { color:var(--dim); }
+.sum-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(108px,1fr)); gap:0.5rem; }
+.sum-block {
+  background:var(--card); border:1px solid var(--border); border-radius:5px;
+  padding:0.6rem 0.55rem; text-align:center; position:relative; overflow:hidden;
+}
+.sum-block::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; border-radius:5px 5px 0 0; }
+.sum-block.core::before   { background:var(--core); }
+.sum-block.gold::before   { background:var(--gold); }
+.sum-block.purple::before { background:var(--purple); }
+.sum-block.blue::before   { background:var(--blue); }
+.sum-icon {
+  font-family:'Ma Shan Zheng',serif; width:20px; height:20px; border-radius:50%;
+  margin:0 auto 0.3rem; display:flex; align-items:center; justify-content:center; font-size:10px;
+}
+.sum-icon.core   { background:rgba(136,152,184,.14); color:var(--core); }
+.sum-icon.gold   { background:rgba(224,168,32,.14);  color:var(--gold); }
+.sum-icon.purple { background:rgba(155,110,232,.14); color:var(--purple); }
+.sum-icon.blue   { background:rgba(90,170,232,.14);  color:var(--blue); }
+.sum-val { font-size:1.2rem; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; margin-bottom:0.06rem; }
+.sum-val.core   { color:var(--core); }
+.sum-val.gold   { color:var(--gold); }
+.sum-val.purple { color:var(--purple); }
+.sum-val.blue   { color:var(--blue); }
+.sum-frag { font-size:0.53rem; font-variant-numeric:tabular-nums; color:var(--muted); margin-bottom:0.1rem; }
+.sum-lbl    { font-size:0.58rem; color:var(--dim); line-height:1.2; }
+.sum-lbl-zh { font-size:0.52rem; color:var(--muted); opacity:0.65; line-height:1.2; }
+.sum-section { margin-top:0.9rem; }
+.sum-row-lbl {
+  font-size:0.58rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:0.45rem;
+  padding-bottom:0.3rem; border-bottom:1px solid var(--blight);
+}
+
+@media (max-width:600px) {
+  header { padding:0.7rem 1rem; flex-wrap:wrap; }
+  .legend { display:none; }
+  main { padding:1rem 0.875rem; }
+  .sum-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <svg class="emblem" viewBox="0 0 40 40" fill="none">
+      <polygon points="20,2 37,11 37,29 20,38 3,29 3,11" fill="none" stroke="#E0A820" stroke-width="1.4" opacity="0.4"/>
+      <polygon points="20,7 32,14 32,26 20,33 8,26 8,14" fill="none" stroke="#E0A820" stroke-width="1"/>
+      <circle cx="20" cy="20" r="5.5" fill="none" stroke="#E0A820" stroke-width="1.4"/>
+      <line x1="20" y1="2"  x2="20" y2="7"  stroke="#E0A820" stroke-width="1.4"/>
+      <line x1="20" y1="33" x2="20" y2="38" stroke="#E0A820" stroke-width="1.4"/>
+      <line x1="3"  y1="11" x2="8"  y2="14" stroke="#E0A820" stroke-width="1.4"/>
+      <line x1="37" y1="11" x2="32" y2="14" stroke="#E0A820" stroke-width="1.4"/>
+      <line x1="3"  y1="29" x2="8"  y2="26" stroke="#E0A820" stroke-width="1.4"/>
+      <line x1="37" y1="29" x2="32" y2="26" stroke="#E0A820" stroke-width="1.4"/>
+    </svg>
+    <div>
+      <div class="site-en">Skill Upgrade Calculator</div>
+      <div class="site-sub">技能推演计算器</div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="lpip core"></div>Copy</div>
+    <div class="lsep">·</div>
+    <div class="leg"><div class="lpip gold"></div>Gold · 金色碎片</div>
+    <div class="lsep">·</div>
+    <div class="leg"><div class="lpip purple"></div>Purple · 紫色碎片</div>
+    <div class="lsep">·</div>
+    <div class="leg"><div class="lpip blue"></div>Blue · 蓝色碎片</div>
+    <div class="lsep">·</div>
+    <div class="leg" style="opacity:.6">1 copy = 40 frags</div>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()">Theme · 主题</button>
+</header>
+
+<main>
+  <div class="divider">6 Skills · 六技能配置</div>
+  <div class="ring-wrap">
+    <div class="orb-ring" id="skillGrid"></div>
+  </div>
+
+  <div class="divider">Total Resources · 资源总计</div>
+  <div class="summary">
+    <div class="sum-head">
+      <div>
+        <span class="sum-title-en">Build Summary</span>
+        <span class="sum-title-zh">合计资源</span>
+      </div>
+      <button class="btn-reset" onclick="resetAll()">Reset · 重置</button>
+    </div>
+    <div class="copies-note">
+      <strong>Note:</strong> 1 copy = 40 skill-specific fragments &nbsp;·&nbsp;
+      <span style="opacity:.6">1本体 = 40技能碎片</span>
+    </div>
+    <div class="sum-section">
+      <div class="sum-row-lbl">Current Build Total</div>
+      <div class="sum-grid" id="sumGrid-cur"></div>
+    </div>
+    <div class="sum-section">
+      <div class="sum-row-lbl">↑ Upgrade Differential</div>
+      <div class="sum-grid" id="sumGrid-upg"></div>
+    </div>
+    <div class="sum-section">
+      <div class="sum-row-lbl">⇄ Swap Differential</div>
+      <div class="sum-grid" id="sumGrid-swp"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+const LEVELS = ['1★','2★','3★','玄1','玄2','玄3','地1','地2','地3','天1','天2','天3'];
+const TIER_GROUPS = [
+  {label:'T0 · 星', end:3},{label:'T1 · 玄', end:6},
+  {label:'T2 · 地', end:9},{label:'T3 · 天', end:12},
+];
+const FRAGS = 40;
+
+const COSTS = {
+  '人界': [
+    {c:1,g:0,p:0,b:0},{c:1,g:0,p:30,b:100},{c:1,g:0,p:60,b:150},
+    {c:1,g:40,p:60,b:150},{c:1,g:40,p:90,b:220},{c:1,g:40,p:90,b:220},
+    {c:1,g:40,p:90,b:220},{c:2,g:80,p:200,b:500},{c:2,g:80,p:200,b:500},
+    {c:3,g:120,p:300,b:750},{c:3,g:120,p:300,b:750}
+  ],
+  '三系': [
+    {c:0,g:80,p:100,b:200},{c:0,g:80,p:100,b:200},{c:1,g:80,p:150,b:350},
+    {c:2,g:80,p:200,b:500},{c:2,g:120,p:250,b:650},{c:2,g:160,p:350,b:900},
+    {c:3,g:200,p:500,b:1200},{c:4,g:240,p:600,b:1500},{c:5,g:320,p:700,b:1800},
+    {c:6,g:400,p:800,b:2100},{c:7,g:480,p:1000,b:2400}
+  ],
+  '熬海': [
+    {c:0,g:120,p:100,b:300},{c:0,g:120,p:150,b:350},{c:1,g:160,p:250,b:600},
+    {c:2,g:160,p:300,b:800},{c:2,g:240,p:450,b:1100},{c:2,g:320,p:500,b:1300},
+    {c:3,g:400,p:600,b:1600},{c:4,g:480,p:750,b:1900},{c:5,g:560,p:900,b:2200},
+    {c:6,g:640,p:1000,b:2500},{c:7,g:720,p:1200,b:2800}
+  ]
+};
+
+const TYPES   = ['人界','三系','熬海'];
+const TYPE_EN = {'人界':'Mortal','三系':'Demon','熬海':'Balesea'};
+const TYPE_ZH = {'人界':'人界','三系':'返虎三系','熬海':'返虎熬海'};
+const COPY_EN = {'人界':'Mortal Copy','三系':'Demon Copy','熬海':'Balesea Copy'};
+const COPY_ZH = {'人界':'人界本体','三系':'三系本体','熬海':'熬海本体'};
+const COPY_ICN= {'人界':'界','三系':'三','熬海':'海'};
+const N = 6;
+
+function calcCost(type, from, to) {
+  if (from >= to) return {c:0,g:0,p:0,b:0};
+  const u = COSTS[type]; let c=0,g=0,p=0,b=0;
+  for (let i=from; i<to; i++) { c+=u[i].c; g+=u[i].g; p+=u[i].p; b+=u[i].b; }
+  return {c,g,p,b};
+}
+
+function fmt(n) { return n===0?'0':n.toLocaleString(); }
+
+function levelOpts(def) {
+  let html='', t=0;
+  for (let i=0; i<LEVELS.length; i++) {
+    if (i===(t===0?0:TIER_GROUPS[t-1].end)) { if(i>0)html+='</optgroup>'; html+=`<optgroup label="${TIER_GROUPS[t].label}">`; t++; }
+    html+=`<option value="${i}"${i===def?' selected':''}>${LEVELS[i]}</option>`;
+  }
+  return html+'</optgroup>';
+}
+
+function refreshSwapOpts(i, mainCost, ctype) {
+  const el = document.getElementById(`ctgt${i}`);
+  const cur = parseInt(el.value);
+  let html='', t=0;
+  for (let lvl=0; lvl<LEVELS.length; lvl++) {
+    if (lvl===(t===0?0:TIER_GROUPS[t-1].end)) { if(lvl>0)html+='</optgroup>'; html+=`<optgroup label="${TIER_GROUPS[t].label}">`; t++; }
+    const sc = calcCost(ctype, 0, lvl);
+    const safe = lvl > 0 && sc.g <= mainCost.g && sc.p <= mainCost.p && sc.b <= mainCost.b;
+    html+=`<option value="${lvl}"${lvl===cur?' selected':''}>${LEVELS[lvl]}${safe?' ✓ Safe':''}</option>`;
+  }
+  el.innerHTML = html+'</optgroup>';
+}
+
+function typeOpts(sel) {
+  return TYPES.map(t=>`<option value="${t}"${t===sel?' selected':''}>${TYPE_EN[t]} · ${TYPE_ZH[t]}</option>`).join('');
+}
+
+function barHtml(cost, type) {
+  const {c, g, p, b} = cost;
+  let copyChip, goldChip;
+
+  if (c === 0 && g > 0) {
+    // No copies required but gold is — merge: show gold-equivalent in copy slot
+    const gEq = g / 40;
+    copyChip = `<span class="cb core"><div class="cb-pip core"></div>${fmt(gEq)}<span class="cb-sub">≈${fmt(g)}g</span></span>`;
+    goldChip = ''; // absorbed into copy chip
+  } else {
+    const fr = c * FRAGS;
+    const note = c > 0 ? `<span class="cb-sub">≈${fmt(fr)}f</span>` : '';
+    copyChip = `<span class="cb core${c===0?' zero':''}"><div class="cb-pip core"></div>${fmt(c)}${note}</span>`;
+    goldChip = `<span class="cb-sep">·</span><span class="cb gold${g===0?' zero':''}"><div class="cb-pip gold"></div>${fmt(g)}</span>`;
+  }
+
+  return `${copyChip}${goldChip}
+    <span class="cb-sep">·</span>
+    <span class="cb purple${p===0?' zero':''}"><div class="cb-pip purple"></div>${fmt(p)}</span>
+    <span class="cb-sep">·</span>
+    <span class="cb blue${b===0?' zero':''}"><div class="cb-pip blue"></div>${fmt(b)}</span>`;
+}
+
+// diff = compare − main  (+ve = compare costs more = red, −ve = compare cheaper = green)
+function diffHtml(main, cmp) {
+  const keys = [
+    {k:'c',pip:'core',  lbl:'Copy'  },
+    {k:'g',pip:'gold',  lbl:'Gold'  },
+    {k:'p',pip:'purple',lbl:'Purple'},
+    {k:'b',pip:'blue',  lbl:'Blue'  },
+  ];
+  let html='<span class="diff-lbl">Δ</span>';
+  let allEven = true;
+  for (const d of keys) {
+    const delta = cmp[d.k] - main[d.k];
+    if (delta!==0) allEven=false;
+    const cls = delta===0?'even':(delta<0?'save':'cost');
+    const sign = delta>0?'+':'';
+    const lbl  = delta===0?`${d.lbl}=`:`${d.lbl}${sign}${fmt(delta)}`;
+    html += `<span class="dc ${cls}"><div class="cb-pip ${d.pip}"></div>${lbl}</span>`;
+  }
+  if (allEven) html += '<span class="dc even">no difference</span>';
+  return html;
+}
+
+function buildGrid() {
+  const ring = document.getElementById('skillGrid');
+  for (let i=0; i<N; i++) {
+    const el = document.createElement('div');
+    el.className = 'orb';
+    el.innerHTML = `
+      <div class="orb-head">
+        <span class="orb-num">S${i+1}</span>
+        <select id="type${i}" onchange="update()">${typeOpts('人界')}</select>
+      </div>
+      <div class="orb-main">
+        <div class="lvl-row">
+          <span class="lbl">From</span>
+          <select id="from${i}" onchange="clamp(${i});update()">${levelOpts(0)}</select>
+          <span class="arr">→</span>
+          <select id="to${i}" onchange="update()">${levelOpts(0)}</select>
+          <span class="lbl-r">To</span>
+        </div>
+        <div class="cbar" id="bar${i}"></div>
+      </div>
+      <div class="orb-sep"><span class="vs-txt">⇄ swap</span></div>
+      <div class="orb-cmp">
+        <div class="cmp-row">
+          <select id="ctype${i}" onchange="update()">${typeOpts('人界')}</select>
+          <select id="ctgt${i}" onchange="update()" style="flex:0 0 72px">${levelOpts(0)}</select>
+        </div>
+        <div class="cbar" id="cbar${i}" style="padding-top:0; border-top:none; margin-top:0.3rem"></div>
+      </div>
+      <div class="orb-diff" id="diff${i}"></div>`;
+    ring.appendChild(el);
+  }
+}
+
+function clamp(i) {
+  const from = parseInt(document.getElementById(`from${i}`).value);
+  const toEl  = document.getElementById(`to${i}`);
+  if (parseInt(toEl.value) <= from) toEl.value = Math.min(from+1, 11);
+}
+
+function update() {
+  const zero = () => ({'人界':0,'三系':0,'熬海':0});
+  const curByType = zero(), upgByType = zero(), swpByType = zero();
+  let curG=0,curP=0,curB=0, upgG=0,upgP=0,upgB=0, swpG=0,swpP=0,swpB=0;
+
+  for (let i=0; i<N; i++) {
+    const type  = document.getElementById(`type${i}`).value;
+    const from  = parseInt(document.getElementById(`from${i}`).value);
+    const to    = parseInt(document.getElementById(`to${i}`).value);
+    const ctype = document.getElementById(`ctype${i}`).value;
+    const ctgt  = parseInt(document.getElementById(`ctgt${i}`).value);
+
+    const cur   = calcCost(type,  0,    from); // what's already invested
+    const cost  = calcCost(type,  from, to);   // upgrade differential
+    refreshSwapOpts(i, cost, ctype);
+    const ccost = calcCost(ctype, 0, ctgt);    // swap differential
+
+    document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
+    document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);
+    document.getElementById(`diff${i}`).innerHTML = diffHtml(cost, ccost);
+
+    curByType[type] += cur.c;  curG+=cur.g;  curP+=cur.p;  curB+=cur.b;
+    upgByType[type] += cost.c; upgG+=cost.g; upgP+=cost.p; upgB+=cost.b;
+    swpByType[ctype]+= ccost.c;swpG+=ccost.g;swpP+=ccost.p;swpB+=ccost.b;
+  }
+  renderSummary('sumGrid-cur', curByType, curG, curP, curB);
+  renderSummary('sumGrid-upg', upgByType, upgG, upgP, upgB);
+  renderSummary('sumGrid-swp', swpByType, swpG, swpP, swpB);
+}
+
+function renderSummary(id, coreByType, g, p, b) {
+  let html='';
+  TYPES.forEach(t => {
+    const v = coreByType[t];
+    html+=`<div class="sum-block core"><div class="sum-icon core">${COPY_ICN[t]}</div><div class="sum-val core">${fmt(v)}</div><div class="sum-frag">≈${fmt(v*FRAGS)}f</div><div class="sum-lbl">${COPY_EN[t]}</div><div class="sum-lbl-zh">${COPY_ZH[t]}</div></div>`;
+  });
+  html+=`
+    <div class="sum-block gold"><div class="sum-icon gold">金</div><div class="sum-val gold">${fmt(g)}</div><div class="sum-frag">&nbsp;</div><div class="sum-lbl">Gold Shards</div><div class="sum-lbl-zh">金色碎片</div></div>
+    <div class="sum-block purple"><div class="sum-icon purple">紫</div><div class="sum-val purple">${fmt(p)}</div><div class="sum-frag">&nbsp;</div><div class="sum-lbl">Purple Shards</div><div class="sum-lbl-zh">紫色碎片</div></div>
+    <div class="sum-block blue"><div class="sum-icon blue">蓝</div><div class="sum-val blue">${fmt(b)}</div><div class="sum-frag">&nbsp;</div><div class="sum-lbl">Blue Shards</div><div class="sum-lbl-zh">蓝色碎片</div></div>`;
+  document.getElementById(id).innerHTML = html;
+}
+
+function resetAll() {
+  for (let i=0; i<N; i++) {
+    document.getElementById(`type${i}`).value  = '人界';
+    document.getElementById(`from${i}`).value  = '0';
+    document.getElementById(`to${i}`).value    = '0';
+    document.getElementById(`ctype${i}`).value = '人界';
+    document.getElementById(`ctgt${i}`).value  = '0';
+  }
+  update();
+}
+
+function toggleTheme() {
+  const r=document.documentElement, c=r.getAttribute('data-theme');
+  if(!c) r.setAttribute('data-theme','dark');
+  else if(c==='dark') r.setAttribute('data-theme','light');
+  else r.removeAttribute('data-theme');
+}
+
+buildGrid();
+update();
+</script>
+</body>
+</html>

@@ -590,8 +590,8 @@ function update() {
     const ctype = document.getElementById(`ctype${i}`).value;
 
     const cur   = calcCost(type,  0,    from); // what's already invested
-    const cost  = calcCost(type,  from, to);   // upgrade differential
-    const ccost = calcCost(ctype, from, to);   // swap: same from→to range, different type
+    const cost  = calcCost(type,  from, to);   // upgrade: current → desired
+    const ccost = calcCost(ctype, 0,    from); // swap: build alt type from 1★ to current level
 
     document.getElementById(`bar${i}`).innerHTML  = barHtml(cost,  type);
     document.getElementById(`cbar${i}`).innerHTML = barHtml(ccost, ctype);

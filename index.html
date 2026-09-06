@@ -52,7 +52,56 @@ header {
 
 
 /* ── Layout ── */
-main { max-width:1080px; margin:0 auto; padding:1.25rem 1.5rem; }
+.page-layout {
+  display: flex;
+  gap: 1.5rem;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+  align-items: flex-start;
+}
+.sidebar {
+  flex: 0 0 190px;
+  position: sticky;
+  top: 1.25rem;
+}
+.instr-panel {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.instr-head {
+  background: var(--surface);
+  border-bottom: 1px solid var(--blight);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.instr-body { padding: 0.65rem 0.75rem; }
+.instr-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--blight);
+}
+.instr-item:last-child { border-bottom: none; }
+.instr-key {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+.instr-desc {
+  font-size: 0.61rem;
+  color: var(--dim);
+  line-height: 1.4;
+}
+main { flex: 1; min-width: 0; }
 .divider {
   display:flex; align-items:center; gap:0.6rem;
   font-size:0.56rem; letter-spacing:0.16em; text-transform:uppercase;
@@ -261,6 +310,15 @@ select:hover, select:focus { border-color:var(--dim); outline:none; }
   padding-bottom:0.3rem; border-bottom:1px solid var(--blight);
 }
 
+@media (max-width:900px) {
+  .page-layout { flex-direction: column; }
+  .sidebar { position: static; flex: none; width: 100%; }
+  .instr-panel { display: flex; flex-direction: row; overflow-x: auto; }
+  .instr-head { display: none; }
+  .instr-body { display: flex; gap: 0; flex: 1; }
+  .instr-item { flex: 1; border-bottom: none; border-right: 1px solid var(--blight); padding: 0.5rem 0.65rem; }
+  .instr-item:last-child { border-right: none; }
+}
 @media (max-width:600px) {
   header { padding:0.7rem 1rem; flex-wrap:wrap; }
   .legend { display:none; }
@@ -302,6 +360,26 @@ select:hover, select:focus { border-color:var(--dim); outline:none; }
   </div>
 </header>
 
+<div class="page-layout">
+<aside class="sidebar">
+  <div class="instr-panel">
+    <div class="instr-head">How to use</div>
+    <div class="instr-body">
+      <div class="instr-item">
+        <span class="instr-key">Set From</span>
+        <span class="instr-desc">Your current skill level</span>
+      </div>
+      <div class="instr-item">
+        <span class="instr-key">Adjust To</span>
+        <span class="instr-desc">Your desired upgrade level</span>
+      </div>
+      <div class="instr-item">
+        <span class="instr-key">Adjust Swap</span>
+        <span class="instr-desc">If changing build to a different realm skill</span>
+      </div>
+    </div>
+  </div>
+</aside>
 <main>
   <div class="divider">6 Skills · 六技能配置</div>
   <div class="ring-wrap">
@@ -335,6 +413,7 @@ select:hover, select:focus { border-color:var(--dim); outline:none; }
     </div>
   </div>
 </main>
+</div>
 
 <script>
 const LEVELS = ['1★','2★','3★','玄1','玄2','玄3','地1','地2','地3','天1','天2','天3'];
